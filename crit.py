@@ -189,57 +189,74 @@ except:
 	urllib_quote_plus = urllib.parse.quote_plus
 
 
-def login_kamu():
+def cekAPI(cookie):
+    user=open('.username','r').read()
+    try:
+        c=s.get("https://i.instagram.com/api/v1/users/web_profile_info/?username=%s"%(user),cookies={'cookie':cookie},headers={"user-agent":USN,"x-ig-app-id":'936619743392459'})
+        i=c.json()["data"]["user"]
+        nama=i["full_name"]
+        followers=i["edge_followed_by"]["count"]
+        following=i["edge_follow"]["count"]
+        external.append(f'{nama}|{followers}|{following}')
+    except  (ValueError,KeyError):
+        wel='# Instagram Checkpoint'
+        wel2 = mark(wel, style='red')
+        sol().print(wel2)
+        time.sleep(4)
+        os.remove('.kukis.log')
+        os.remove('.username')
+        exit()
+    return external,user
+
+def ANJIM():
     if "sukses" in lisensiku:
         try:
             kuki=open('.kukis.log','r').read()
         except FileNotFoundError:
             banner()
-            cetak(nel(f"""[white][[green]1[white]] Login Menggunakan Cookie""",style="#808000",title='[white]Login Dulu Anjing Anak Haram Lu'))
-            loginpil=input(f"  [\033[31m•\033[0m] Chouse :{C} ")
+            print('')
+            prints(Panel(f"""[white][[red]01[white]] Login Menggunakan Cookie [white]([green]on[white])\n[white][[red]02[white]] Login Menggunakan Username & Password [white]([red]of[white])""", title='[on cyan][bold green]•Pilih Metode Login•[white]'))
+            loginpil=input(f"  {P}[{M}•{P}] Pilihan 1 sampai 2 : {N}")
             if loginpil=='1':
-                cetak(nel(f""" [white]Gunakan username dan cookies instagram untuk login. sebelum login pastikan akun bersifat publik bukan privat""",style="#808000"))
-                us=input(f'  [\033[31m•\033[0m] Username :{C}')
-                cok=input(f'  [\033[31m•\033[0m] Cookie :{C}')
+                cetak(nel(f"""[white][[red]•[white]] Gunakan username dan cookies instagram untuk login.\n[white][[red]•[white]] sebelum login pastikan akun bersifat publik bukan privat"""))
+                us=input(f'  {P}[{M}•{P}] Masukan Username : {N}')
+
+                cok=input(f'  {P}[{M}•{P}] Masukan Cookie : {N}')
+                loading()
                 kuki=open('.kukis.log','w').write(cok)
-                user=open('.username','w').write(us)
-                asep(Panel.fit("[white][[green]•[white]] Login Sucsesfully Silahkan Run Kembali"))
-                sleep(2.3)
-                exit()
+                user=open('.username','w').write(us);exit()
+                os.system('python run.py')
             elif loginpil == '2':
-                cetak(nel(f"""[white][[green]•[white] Sedang Dalam Perbaikan""",style="#808000"));exit()
+                login()
+
         ex,user=cekAPI(kuki)
         cookie={'cookie':kuki}
         instagram(ex,user,cookie).menu()
     else:
         login()
+        
 def login():
     global external
     try:
-        print('\n[•] Gunakan username dan password instagram untuk login. sebelum login pastikan akun bersifat publik bukan privat')
-        us=input(f"[•] Username: {C}")
-        pw=stdiomask.getpass(prompt=f'[•] Password: {C}')
+        cetak(nel(f"""[white][[red]•[white]] Gunakan username dan password instagram untuk login.\n[white][[red]•[white]] sebelum login pastikan akun bersifat publik bukan privat""")) 
+        us=input(f"  {P}[{M}•{P}] Masukan username: {N}")
+        pw=stdiomask.getpass(prompt=f'{P}[{M}•{P}] Masukan password: {N}')
     except KeyboardInterrupt:
-        wel = '# KeyboardInterrupt terdeteksi... keluar !'
-        wel2 = mark(wel, style='green')
-        sol().print(wel2)
+        print('{M} KeyboardInterrupt terdeteksi... keluar{N}!!!')
         exit()
+        
     x=instagramAPI(us,pw).loginAPI()
     if x.get('status')=='success':
         open('.username','a').write(us)
         open('.kukis.log','a').write(x.get('cookie'))
         cookie={'cookie':x.get('cookie')}
-        print(f'\n{H}>{C} Login berhasil')
-        login_kamu()
+        print(f'\n {H} nice Login berhasil{N}')
+        os.system('python run.py')
     elif x.get('status')=='checkpoint':
-        wel = '# Login checkpoint'
-        wel2 = mark(wel, style='green')
-        sol().print(wel2)
+        print(f'\t{M}login check point{N}')
         login()
     else:
-        wel = '# Username atau password yang anda masukan salah'
-        wel2 = mark(wel, style='green')
-        sol().print(wel2)
+        print(f' {M}user name atau passboard yang anda masukan salah{N}')
         login()
 
 class instagram:
